@@ -59,13 +59,13 @@ func_LR_to_OM_boostedtreesCV_binary <- function(outcome,Lframe,Rframe,
   
   Lframe$outcome <- Lframe[,outcome]
   Lframe <- Lframe[,c("outcome",predictors,aid)]
-  Lframe$outcome <- as.numeric(Lframe$outcome==1)
+  Lframe$outcome <- as.numeric(Lframe$outcome==2)
   
   Oframe.later <- Rframe
   
   Rframe$outcome <- Rframe[,outcome]
   Rframe <- Rframe[,c("outcome",predictors,aid)]
-  Rframe$outcome <- as.numeric(Rframe$outcome==1)
+  Rframe$outcome <- as.numeric(Rframe$outcome==2)
   
   for (k in 1:ncol(Lframe)){
     if (is.character(Lframe[,k])){
@@ -93,8 +93,9 @@ func_LR_to_OM_boostedtreesCV_binary <- function(outcome,Lframe,Rframe,
       rm(boost.ref)
       rm(Lframe.loc)
       
-      Lframe.loc <- subset(Lframe,
-                            Lframe[,aid] == incl.locs[j])[,-ncol(Lframe)]
+      Lframe.loc <- subset(Lframe, levels(Lframe$aid)[Lframe$aid] == incl.locs[j])[, -ncol(Lframe)] 
+      #Lframe.loc <- subset(Lframe,
+                            #Lframe[,aid] == incl.locs[j])[,-ncol(Lframe)]
       boost.ref <- gbm(outcome ~ ., data = Lframe.loc, shrinkage = shrink,
                        distribution="bernoulli", n.trees = n.trees, 
                        interaction.depth = depth, cv.folds = 3)
@@ -118,8 +119,11 @@ func_LR_to_OM_boostedtreesCV_binary <- function(outcome,Lframe,Rframe,
     
     rm(boost.ref)
     rm(Lframe.loc)
-    Lframe.loc <- 
-      subset(Lframe,Lframe[,aid] == incl.locs[j])[,-ncol(Lframe)]
+    
+    Lframe.loc <- subset(Lframe, levels(Lframe$aid)[Lframe$aid] == incl.locs[j])[, -ncol(Lframe)] 
+    
+    #Lframe.loc <- 
+      #subset(Lframe,Lframe[,aid] == incl.locs[j])[,-ncol(Lframe)]
     boost.ref <- gbm(outcome ~ ., data = Lframe.loc, shrinkage = shrink,
                      distribution="bernoulli", n.trees = best.ntrees[j], 
                      interaction.depth = best.depths[j])
@@ -161,3 +165,4 @@ func_LR_to_OM_boostedtreesCV_binary <- function(outcome,Lframe,Rframe,
   return(out)
   
 }
+
