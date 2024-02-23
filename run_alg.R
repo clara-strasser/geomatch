@@ -10,6 +10,7 @@ rm(list=ls())
 # Load packages ----------------------------------------------------------------
 library(foreign)
 library(dplyr)
+library(stringr)
 
 
 # Load data --------------------------------------------------------------------
@@ -47,31 +48,6 @@ predictors <- c("immiyear", "sex", "birth_year",
 incl.locs <- c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16")
 
 
-# Outcome
-outcome <- "employment_year_arrival"
-
-# depth.vec
-depth.vec <- c(4,5,6)
-
-# n.trees
-n.trees <- 1000
-
-# shrink
-shrink <- 0.01
-
-# aid 
-aid <- "aid"
-
-# rid
-rid <- "rid"
-
-# cid
-cid <- "cid"
-
-# csize
-csize <- "csize"
-
-
 ### 1.2) Gradient Boosted Trees ------------------------------------------------
 
 # Source modeling function
@@ -79,7 +55,7 @@ source("src/func_LR_to_OM_boostedtreesCV.R")
 
 # Implement the modeling
 # the first object in the output list is combined O and M matrices
-LRtoOMout <- func_LR_to_OM_boostedtreesCV_binary(outcome = "employment_year_arrival",
+LRtoOMout <- func_LR_to_OM_boostedtreesCV_binary(outcome = "employment_one_year_arrival",
                                                  Lframe = Lframe, Rframe = Rframe,
                                                  aid = "aid", rid = "rid",
                                                  cid = "cid", csize = "csize",
@@ -88,7 +64,7 @@ LRtoOMout <- func_LR_to_OM_boostedtreesCV_binary(outcome = "employment_year_arri
                                                  depth.vec = c(4,5,6),n.trees=1000,
                                                  shrink = 0.01)
 # Save list
-rds_file_name <- "LRtoOMout.rds"
+rds_file_name <- "LRtoOMout_2.rds"
 saveRDS(LRtoOMout, file.path("output/", rds_file_name))
 
 
@@ -136,9 +112,7 @@ D <- func_Mstar_to_D(Mstar = Mstar, slots = slots, cushion = Cushion)
 library(optmatch)
 options(optmatch_max_problem_size = Inf)
 optout <- pairmatch(x = D, controls = 1)
-anyDuplicated(rownames(D))
-anyDuplicated(colnames(D))
-colnames(D) <- make.unique(colnames(D))
+
 
 # Reformat output (see function code for argument and output details)
 source("src/func_optmatch_to_Astar.R")

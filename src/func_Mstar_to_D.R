@@ -25,13 +25,13 @@ func_Mstar_to_D <- function(Mstar,slots,cushion=1){
   
   L <- length(slots)
   D <- 1-replicate(round(cushion*slots[1]),Mstar[,names(slots[1])])
-  colnames(D) <- paste(names(slots[1]),1:round(cushion*slots[1]),sep="")
+  colnames(D) <- paste(names(slots[1]),1:round(cushion*slots[1]),sep="_")
   
   for(i in 2:L){
     cat("location",i,"\n")
     Temp <- 1-replicate(round(cushion*slots[i]),Mstar[,names(slots[i])])
     colnames(Temp) <- paste(names(slots[i]),
-                            1:round(cushion*slots[i]),sep="")
+                            1:round(cushion*slots[i]),sep="_")
     D <- cbind(D,Temp)
   }
   return(D)

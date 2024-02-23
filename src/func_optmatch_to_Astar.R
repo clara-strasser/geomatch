@@ -12,7 +12,7 @@
 
 # Output -----------------------------------------------------------------------
 
-#Function output is a dataframe with case ids and location assignments
+# Function output is a data frame with case ids and location assignments
 
 
 # Function ---------------------------------------------------------------------
@@ -33,6 +33,7 @@ func_optmatch_to_Astar <- function(optout,aids,print=0){
     tcid <- Astar.out$cid[i]
     cval <- cases[which(as.numeric(names(cases)) == tcid)]
     Astar.out$raid[i] <- names(allocs)[which(allocs == cval)]
+    Astar.out$raid[i] <- str_extract(Astar.out$raid[i], "\\d+(?=_\\d*$)")
     
     #Progress message
     if(i %% 100==0 & print>0) {
@@ -44,7 +45,9 @@ func_optmatch_to_Astar <- function(optout,aids,print=0){
   for (i in 1:length(aids)){
     
     taid <- aids[i]
-    Astar.out$raid[grep(taid,Astar.out$raid)] <- taid
+    #Astar.out$raid <- str_extract(Astar.out$raid, "\\d+(?=_)")
+    #Astar.out$raid <- gsub(paste0("\\b", taid, "\\b"), taid, Astar.out$raid)
+    Astar.out$raid[Astar.out$raid == taid] <- taid
     
   }
   

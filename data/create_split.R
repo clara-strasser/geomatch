@@ -52,9 +52,13 @@ data <- data %>%
 # Change to correct format:
 data$aid <- as.factor(data$aid)
 data$employment_year_arrival <- as.numeric(data$employment_year_arrival)
+data$employment_one_year_arrival <- as.numeric(data$employment_one_year_arrival)
 
 # remove NA
 data <- data[complete.cases(data$employment_year_arrival), ]
+
+# remove NA
+data <- data[complete.cases(data$employment_one_year_arrival), ]
 
 ## 3) Split data ---------------------------
 # Lframe - 11.020
