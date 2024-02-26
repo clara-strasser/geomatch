@@ -5,12 +5,17 @@ library(dplyr)
 
 # Load data --------------------------------------------------------------------
 
+# Refugee data
+load("data/raw/refugee_data.RData")
+
+# Migrants data
+load("data/raw/migrants_data.RData")
 
 
 # Train - Test Split -----------------------------------------------------------
 
 
-## 1) Combine data -------------------------
+## 1) Combine data ------------------------
 # Input:
 # refugee_data - 8.309 rows
 # migrants_data - 4.732 rows
@@ -19,7 +24,7 @@ library(dplyr)
 
 data <- rbind(migrants_data, refugee_data)
 
-## 2) Add variables-------------------------
+## 2) Add variables------------------------
 # aid: name of variable specifying actual location assignment
 # rid: name of variable specifying individual identifier codes
 # cid: name of variable specifying case identifier codes
@@ -43,25 +48,28 @@ data <- data %>%
   group_by(cid) %>%
   mutate(csize = n())
 
-# order
+
+## 3) Order data -------------------------
+
 data <- data %>%
   select(aid, rid, cid, csize,
          everything())
 
-# format
-# Change to correct format:
+## 4) Correct formats --------------------
+
 data$aid <- as.factor(data$aid)
 data$employment_year_arrival <- as.numeric(data$employment_year_arrival)
 data$employment_one_year_arrival <- as.numeric(data$employment_one_year_arrival)
+data$employment_two_year_arrival <- as.numeric(data$employment_two_year_arrival)
 
-# remove NA
+## 5) Complete cases -------------------- 
+
 data <- data[complete.cases(data$employment_year_arrival), ]
-
-# remove NA
 data <- data[complete.cases(data$employment_one_year_arrival), ]
+data <- data[complete.cases(data$employment_two_year_arrival), ]
 
-## 3) Split data ---------------------------
-# Lframe - 11.020
+## 6) Split data -------------------------
+# Lframe - 11.019
 # Rframe - 2021
 
 Lframe <- data %>%
@@ -71,11 +79,10 @@ Rframe <- data %>%
   filter(immiyear >= 2017)
 
 
-## 4)  ------------------------
+## 7) Save data ------------------------
 
-
-
-
+save(Lframe, file = "data/processed/Lframe.RData")
+save(Rframe, file = "data/processed/Rframe.RData")
 
 
 
