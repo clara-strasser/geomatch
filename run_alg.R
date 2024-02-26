@@ -14,20 +14,11 @@ library(stringr)
 
 
 # Load data --------------------------------------------------------------------
-# IAB-BAMF-SOEP data
-# IAB-SOEP-MIG data
-
-load("data/processed/refugee_data.RData")
-load("data/processed/migrants_data.RData")
-
-
-# Train-Test split -------------------------------------------------------------
-# Maybe with function?
-# Idea: combine mig and ref till 2016 for train, and from 17 for test
-
-
-#Lframe <- All working age refugees who arrived till 2016Q4
-#Rframe <- All working age free case refugees who arrived 2017Q1
+# Lframe
+# Rframe
+setwd("C:/Users/ru23kek/Desktop/projects/geomatch/")
+load("data/processed/Lframe.RData")
+load("data/processed/Rframe.RData")
 
 
 # Main -------------------------------------------------------------------------
@@ -50,12 +41,11 @@ incl.locs <- c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "1
 
 ### 1.2) Gradient Boosted Trees ------------------------------------------------
 
-# Source modeling function
+# Source: Modeling function
 source("src/func_LR_to_OM_boostedtreesCV.R")
 
-# Implement the modeling
-# the first object in the output list is combined O and M matrices
-LRtoOMout <- func_LR_to_OM_boostedtreesCV_binary(outcome = "employment_one_year_arrival",
+# Implement: Modeling
+LRtoOMout_2 <- func_LR_to_OM_boostedtreesCV_binary(outcome = "employment_one_year_arrival",
                                                  Lframe = Lframe, Rframe = Rframe,
                                                  aid = "aid", rid = "rid",
                                                  cid = "cid", csize = "csize",
@@ -63,14 +53,14 @@ LRtoOMout <- func_LR_to_OM_boostedtreesCV_binary(outcome = "employment_one_year_
                                                  predictors = predictors,
                                                  depth.vec = c(4,5,6),n.trees=1000,
                                                  shrink = 0.01)
-# Save list
+# Save 
 rds_file_name <- "LRtoOMout_2.rds"
-saveRDS(LRtoOMout, file.path("output/", rds_file_name))
+saveRDS(LRtoOMout_2, file.path("output/", rds_file_name))
 
 
 ## 2) MAPPING ------------------------------------------------------------------
 
-# Split OM into O and M matrices
+## 2.1) Split OM into O and M matrices
 OM <- LRtoOMout[[1]]
 lastvar <- 6
 

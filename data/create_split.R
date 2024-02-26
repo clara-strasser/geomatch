@@ -68,6 +68,18 @@ data <- data[complete.cases(data$employment_year_arrival), ]
 data <- data[complete.cases(data$employment_one_year_arrival), ]
 data <- data[complete.cases(data$employment_two_year_arrival), ]
 
+## 6) Modify variables -----------------
+
+# employment_one_year_arrival
+data <- data %>%
+  mutate(employment_one_year_arrival = ifelse(employment_year_arrival==2 | employment_one_year_arrival == 2,2, 1))
+
+# employment_two_year_arrival
+data <- data %>%
+  mutate(employment_two_year_arrival = ifelse(employment_one_year_arrival==2 | employment_two_year_arrival == 2,2, 1))
+
+# employment_two_year_arrival
+
 ## 6) Split data -------------------------
 # Lframe - 11.019
 # Rframe - 2021
