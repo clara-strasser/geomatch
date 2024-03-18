@@ -16,13 +16,13 @@ library(optmatch)
 # Load modeling results --------------------------------------------------------
 
 # Employment year arrival
-#LRtoOMout <- readRDS("output/employment_year/LRtoOMout.rds")
+LRtoOMout <- readRDS("output/employment_year/LRtoOMout.rds")
 
 # Employment one year arrival
-#LRtoOMout <- readRDS("output/employment_one_year/LRtoOMout.rds")
+LRtoOMout <- readRDS("output/employment_one_year/LRtoOMout_2.rds")
 
 # Employment two year arrival
-LRtoOMout <- readRDS("output/employment_two_year/LRtoOMout.rds")
+LRtoOMout <- readRDS("output/employment_two_year/LRtoOMout_3_dummy.rds")
 
 
 
@@ -97,9 +97,13 @@ A <- func_Astar_to_A(Astar = Astar, O = O, M = M, print=0)
 
 ## 3.3) Preview results ------------------------
 
-summary(A)
+# Mean outcome
 mean(A$outcome)
+
+# Mean predicted probability
 mean(A$predprob)
+
+# Relative difference between predicted outcome and true outcome
 (mean(A$predprob)-mean(A$outcome))/mean(A$outcome)
 
 
@@ -110,10 +114,10 @@ mean(A$predprob)
 #save(A, file = "output/employment_year/A.RData")
 
 # Employment one year arrival
-#save(A, file = "output/employment_one_year/A.RData")
+save(A, file = "output/employment_one_year/A.RData")
 
 # Employment two year arrival
-save(A, file = "output/employment_two_year/A.RData")
+#save(A, file = "output/employment_two_year/A.RData")
 
 
 

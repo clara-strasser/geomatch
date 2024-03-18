@@ -2,6 +2,7 @@
 
 # Load packages ----------------------------------------------------------------
 library(dplyr)
+library(fastDummies)
 
 # Load data --------------------------------------------------------------------
 
@@ -12,7 +13,7 @@ load("data/raw/refugee_data.RData")
 load("data/raw/migrants_data.RData")
 
 
-# Train - Test Split -----------------------------------------------------------
+# Modify data -----------------------------------------------------------
 
 
 ## 1) Combine data ------------------------
@@ -48,6 +49,11 @@ data <- data %>%
   group_by(cid) %>%
   mutate(csize = n())
 
+# refugee and migrants dummy
+# refugees: 17, 18, 19, 24
+# migrants: 15, 16, 25, 26
+data <- data %>%
+  mutate(refugee_sample = ifelse(psample %in% c(17,18,19,24),1,0))
 
 ## 3) Order data -------------------------
 
@@ -57,16 +63,18 @@ data <- data %>%
 
 ## 4) Correct formats --------------------
 
-data$aid <- as.factor(data$aid)
-data$employment_year_arrival <- as.numeric(data$employment_year_arrival)
-data$employment_one_year_arrival <- as.numeric(data$employment_one_year_arrival)
-data$employment_two_year_arrival <- as.numeric(data$employment_two_year_arrival)
+data <- data %>%
+  mutate(aid = as.factor(aid),
+         employment_year_arrival = as.numeric(employment_year_arrival),
+         employment_one_year_arrival = as.numeric(employment_one_year_arrival),
+         employment_two_year_arrival = as.numeric(employment_two_year_arrival))
 
 ## 5) Complete cases -------------------- 
 
-data <- data[complete.cases(data$employment_year_arrival), ]
-data <- data[complete.cases(data$employment_one_year_arrival), ]
-data <- data[complete.cases(data$employment_two_year_arrival), ]
+data <- data %>%
+  filter(!is.na(employment_year_arrival)) %>%
+  filter(!is.na(employment_one_year_arrival)) %>%
+  filter(!is.na(employment_two_year_arrival))
 
 ## 6) Modify variables -----------------
 
@@ -78,22 +86,80 @@ data <- data %>%
 data <- data %>%
   mutate(employment_two_year_arrival = ifelse(employment_one_year_arrival==2 | employment_two_year_arrival == 2,2, 1))
 
-# employment_two_year_arrival
+# school_years
+data$school_years <- ifelse(data$school_years < 0, NA, data$school_years)
 
-## 6) Split data -------------------------
-# Lframe - 11.019
-# Rframe - 2021
 
+## 7) Remove Missings ----------------
+
+# Get missings 
+#colSums(is.na(data))
+
+# Remove missings
+#na_columns <- c("religious_affiliation", "german_speaking", "german_writing",
+                #"german_reading", "vocational_training")
+
+#data <- data[complete.cases(data[, na_columns]), ]
+
+## 8) One-Hot coding ---------------
+
+# Choose variables and code 
+
+# partner
+#data <- dummy_cols(data, select_columns = c("partner"))
+
+# corigin
+#data <- dummy_cols(data, select_columns = c("corigin"))
+
+# religious affiliation
+#data <- dummy_cols(data, select_columns = c("religious_affiliation"))
+
+# as df
+#data <- as.data.frame(data)
+
+## 9) Subset -----------
+# Keep only working age population: 18-67
+data <- data %>%
+  filter(age_immigration >= 18 & age_immigration <= 67)
+
+
+
+# Train - Test Split -----------------------------------------------------------
+
+
+## 1) Split data -------------------------
+# Lframe - 10974
+# Rframe - 2017
+
+# Lframe
 Lframe <- data %>%
   filter(immiyear <= 2016)
 
+# Rframe
 Rframe <- data %>%
   filter(immiyear >= 2017)
 
+## 2) Handle cases -----------------------
+# Keep only cases that are both in Rframe
+# If a family member of a case is already in Germany
+# than the person in Rframe s assigned to that location.
+# Remove that person from Rframe.
 
-## 7) Save data ------------------------
+# ID
+Rframe <- Rframe %>%
+  mutate(parid_in_id = ifelse(free_case == "no" & !parid %in% rid, 2,1))
 
+# Keep only that cases
+Rframe <- Rframe %>%
+  filter(!parid_in_id == 2)
+
+
+# Save data ------------------------
+
+# Lframe: 10.974
 save(Lframe, file = "data/processed/Lframe.RData")
+
+# Rframe: 1.194
 save(Rframe, file = "data/processed/Rframe.RData")
 
 

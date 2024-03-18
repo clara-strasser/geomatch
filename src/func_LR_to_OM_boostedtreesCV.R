@@ -6,6 +6,7 @@
 # information and outputs.
 
 # Load packages ----------------------------------------------------------------
+
 library(CORElearn)
 library(gbm)
 library(dplyr)
@@ -40,7 +41,7 @@ library(dplyr)
 func_LR_to_OM_boostedtreesCV_binary <- function(outcome,Lframe,Rframe,
            aid,cid,rid,csize,
            incl.locs,predictors,
-           depth.vec,n.trees=1000,shrink = 0.01){
+           depth.vec,n.trees,shrink){
   
   # Create empty objects to return ---------------------------------------------
 

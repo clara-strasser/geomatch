@@ -13,6 +13,7 @@ library(dplyr)
 library(stringr)
 
 
+
 # Load data --------------------------------------------------------------------
 # Lframe
 # Rframe
@@ -26,11 +27,18 @@ load("data/processed/Rframe.RData")
 
 # Specify predictors
 predictors <- c("immiyear", "sex", "birth_year",
-                "birth_month", "free_case", "partner",
+                "refugee_sample","birth_month", "free_case", "partner",
                 "age_immigration", "corigin", "religious_affiliation",
-                "german_speaking", "german_writing", "german_reading",
-                "school_degree_med", "school_degree_high", "vocational_training")
+                "german_speaking", "german_writing", "german_reading", 
+                "school_degree_med", "school_degree_high", "school_years", "vocational_training")
 
+#predictors <- c("immiyear", "sex", "birth_year",
+                #"birth_month", "free_case", "partner_no",
+                #"partner_married", "partner_cohabitation",
+                #"religious_affiliation_catholic", "religious_affiliation_protestant", "religious_affiliation_muslim",
+                #"religious_affiliation_atheist", "corigin",
+                #"age_immigration",  "german_speaking", "german_writing", "german_reading",
+                #"school_degree_med", "school_degree_high", "vocational_training")
 
 # Specify locations 
 incl.locs <- c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16")
@@ -42,6 +50,7 @@ incl.locs <- c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "1
 source("src/func_LR_to_OM_boostedtreesCV.R")
 
 # Implement: Modeling
+set.seed(1234)
 
 # Employment year arrival
 LRtoOMout <- func_LR_to_OM_boostedtreesCV_binary(outcome = "employment_year_arrival",
@@ -75,14 +84,14 @@ LRtoOMout_3 <- func_LR_to_OM_boostedtreesCV_binary(outcome = "employment_two_yea
 
 # Save -------------------------------------------------------------------------
 
-rds_file_name <- "LRtoOMout.rds"
+rds_file_name <- "LRtoOMout_3_dummy.rds"
 
 # Employment year arrival
-saveRDS(LRtoOMout, file.path("output/employment_year/", rds_file_name))
+#saveRDS(LRtoOMout, file.path("output/employment_year/", rds_file_name))
 
 
 # Employment one year arrival
-saveRDS(LRtoOMout_2, file.path("output/employment_one_year/", rds_file_name))
+#saveRDS(LRtoOMout_2, file.path("output/employment_one_year/", rds_file_name))
 
 
 # Employment two year arrival
