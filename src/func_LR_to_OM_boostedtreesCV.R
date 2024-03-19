@@ -91,7 +91,10 @@ func_LR_to_OM_boostedtreesCV_binary <- function(outcome,Lframe,Rframe,
     for (k in 1:length(depth.vec)){
       depth <- depth.vec[k]
       
-      Lframe.loc <- subset(Lframe, levels(Lframe$aid)[Lframe$aid] == incl.locs[j])[, -ncol(Lframe)] 
+      Lframe.loc <- Lframe %>%
+        subset(aid==incl.locs[j]) %>%
+        select(-ncol(.))
+        
       #Lframe.loc <- subset(Lframe,
                             #Lframe[,aid] == incl.locs[j])[,-ncol(Lframe)]
       boost.ref <- gbm(outcome ~ ., data = Lframe.loc, shrinkage = shrink,
@@ -118,8 +121,10 @@ func_LR_to_OM_boostedtreesCV_binary <- function(outcome,Lframe,Rframe,
     rm(boost.ref)
     rm(Lframe.loc)
     
-    Lframe.loc <- subset(Lframe, levels(Lframe$aid)[Lframe$aid] == incl.locs[j])[, -ncol(Lframe)] 
-    
+    Lframe.loc <- Lframe %>%
+      subset(aid==incl.locs[j]) %>%
+      select(-ncol(.))
+    #Lframe.loc <- subset(Lframe, levels(Lframe$aid)[Lframe$aid] == incl.locs[j])[, -ncol(Lframe)] 
     #Lframe.loc <- 
       #subset(Lframe,Lframe[,aid] == incl.locs[j])[,-ncol(Lframe)]
     boost.ref <- gbm(outcome ~ ., data = Lframe.loc, shrinkage = shrink,

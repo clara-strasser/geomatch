@@ -64,7 +64,7 @@ data <- data %>%
 ## 4) Correct formats --------------------
 
 data <- data %>%
-  mutate(aid = as.factor(aid),
+  mutate(aid = as.character(aid),
          employment_year_arrival = as.numeric(employment_year_arrival),
          employment_one_year_arrival = as.numeric(employment_one_year_arrival),
          employment_two_year_arrival = as.numeric(employment_two_year_arrival))
