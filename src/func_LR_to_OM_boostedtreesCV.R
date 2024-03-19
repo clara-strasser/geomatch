@@ -91,9 +91,6 @@ func_LR_to_OM_boostedtreesCV_binary <- function(outcome,Lframe,Rframe,
     for (k in 1:length(depth.vec)){
       depth <- depth.vec[k]
       
-      rm(boost.ref)
-      rm(Lframe.loc)
-      
       Lframe.loc <- subset(Lframe, levels(Lframe$aid)[Lframe$aid] == incl.locs[j])[, -ncol(Lframe)] 
       #Lframe.loc <- subset(Lframe,
                             #Lframe[,aid] == incl.locs[j])[,-ncol(Lframe)]

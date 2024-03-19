@@ -84,18 +84,18 @@ LRtoOMout_3 <- func_LR_to_OM_boostedtreesCV_binary(outcome = "employment_two_yea
 
 # Save -------------------------------------------------------------------------
 
-rds_file_name <- "LRtoOMout_3_dummy.rds"
+#rds_file_name <- "LRtoOMout_3_dummy.rds"
 
 # Employment year arrival
-#saveRDS(LRtoOMout, file.path("output/employment_year/", rds_file_name))
+#saveRDS(LRtoOMout, file.path("output/employment_year/", "LRtoOMout.rds"))
 
 
 # Employment one year arrival
-#saveRDS(LRtoOMout_2, file.path("output/employment_one_year/", rds_file_name))
+#saveRDS(LRtoOMout_2, file.path("output/employment_one_year/", "LRtoOMout_2.rds"))
 
 
 # Employment two year arrival
-saveRDS(LRtoOMout_3, file.path("output/employment_two_year/", rds_file_name))
+#saveRDS(LRtoOMout_3, file.path("output/employment_two_year/", "LRtoOMout_3.rds"))
 
 
 
