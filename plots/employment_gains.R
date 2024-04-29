@@ -101,7 +101,7 @@ ggsave(plot = plot, filename = "employment_prob_third_year.png", path = "output/
 
 # Create data
 data_comparison <- data.frame(
-  outcome = c("Employment One Year After Arrival", "Employment Two Years After Arrival"),
+  outcome = c("One", "Two"),
   actual = c(mean(data_1$outcome), mean(data_2$outcome)),
   alg = c(mean(data_1$predprob), mean(data_2$predprob))
 )
@@ -113,24 +113,25 @@ data_long <- pivot_longer(data_comparison, cols = c(actual, alg ), names_to = "V
 # Plot
 plot_dif <- 
   ggplot(data_long, aes(x = factor(outcome), y = Value, fill = Variable)) +
-  geom_bar(stat = "identity", position = "dodge") +
-  labs(x = "Outcome Variable", y = "Average Employment Probability") +
+  geom_bar(stat = "identity", position = "dodge", width = 0.6) +
+  labs(x = "Year(s) after Arrival", y = "Average Employment Probability") +
   theme_minimal() +
   theme(#panel.border = element_blank(),
     axis.line = element_line(color = "black"),
-    axis.title = element_text(size = 16),
-    axis.text.x = element_text(size = 14),
-    axis.text.y = element_text(size = 14),
-    legend.title = element_text(size = 14, face = "bold"),
-    legend.text = element_text(size = 14),
+    axis.title = element_text(size = 18),
+    axis.text.x = element_text(size = 18),
+    axis.text.y = element_text(size = 18),
+    legend.title = element_text(size = 18, face = "bold"),
+    legend.text = element_text(size = 18),
     legend.key.size = unit(18, "points"),
     legend.position = "top",  
     legend.justification = "left",
-    legend.direction = "vertical",
-    legend.box.just = "right") +
+    legend.direction = "horizontal",
+    legend.box.just = "right",
+    aspect.ratio = 1.2/1) +
   scale_fill_manual(labels = c("Actual", "Algorithmic"), values = c("#66A182","#2E4057")) +
-  guides(fill = guide_legend(title = "Location Assignment")) 
-
+  guides(fill = guide_legend(title = "Location Assignment:")) 
+plot_dif
 
 ggsave(plot = plot_dif, filename = "employment_prob_dif.png", path = "output/plots/", width = 15, height = 8) 
 
