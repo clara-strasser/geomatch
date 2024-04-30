@@ -16,13 +16,13 @@ library(optmatch)
 # Load modeling results --------------------------------------------------------
 
 # Employment year arrival
-LRtoOMout <- readRDS("output/employment_year/LRtoOMout.rds")
+#LRtoOMout <- readRDS("output/employment_year/LRtoOMout.rds")
 
 # Employment one year arrival
-LRtoOMout <- readRDS("output/employment_one_year/LRtoOMout_2_test.rds")
+LRtoOMout <- readRDS("output/refmig_refmig/employment_one_year/LRtoOMout_2.rds")
 
 # Employment two year arrival
-LRtoOMout <- readRDS("output/employment_two_year/LRtoOMout_3_test.rds")
+#LRtoOMout <- readRDS("output/refmig_refmig/employment_two_year/LRtoOMout_3.rds")
 
 
 
@@ -111,13 +111,13 @@ mean(A$predprob)
 
 
 # Employment year arrival
-#save(A, file = "output/employment_year/A_1.RData")
+#save(A, file = "output/employment_year/A.RData")
 
 # Employment one year arrival
-#save(A, file = "output/employment_one_year/A_2.RData")
+save(A, file = "output/refmig_refmig/employment_one_year/A.RData")
 
 # Employment two year arrival
-#save(A, file = "output/employment_two_year/A_3.RData")
+#save(A, file = "output/refmig_refmig/employment_two_year/A.RData")
 
 
 

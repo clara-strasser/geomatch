@@ -17,8 +17,8 @@ library(stringr)
 # Load data --------------------------------------------------------------------
 # Lframe
 # Rframe
-load("data/processed/Lframe.RData")
-load("data/processed/Rframe.RData")
+load("data/refmig_refmig/Lframe.RData")
+load("data/refmig_refmig/Rframe.RData")
 
 
 # 1) Main ----------------------------------------------------------------------
@@ -53,14 +53,14 @@ source("src/func_LR_to_OM_boostedtreesCV.R")
 set.seed(1234)
 
 # Employment year arrival
-LRtoOMout <- func_LR_to_OM_boostedtreesCV_binary(outcome = "employment_year_arrival",
+'LRtoOMout <- func_LR_to_OM_boostedtreesCV_binary(outcome = "employment_year_arrival",
                                                    Lframe = Lframe, Rframe = Rframe,
                                                    aid = "aid", rid = "rid",
                                                    cid = "cid", csize = "csize",
                                                    incl.locs = incl.locs, 
                                                    predictors = predictors,
                                                    depth.vec = c(4,5,6),n.trees=1000,
-                                                   shrink = 0.01)
+                                                   shrink = 0.01)'
 
 # Employment one year arrival
 LRtoOMout_2 <- func_LR_to_OM_boostedtreesCV_binary(outcome = "employment_one_year_arrival",
@@ -84,18 +84,17 @@ LRtoOMout_3 <- func_LR_to_OM_boostedtreesCV_binary(outcome = "employment_two_yea
 
 # Save -------------------------------------------------------------------------
 
-#rds_file_name <- "LRtoOMout_3_dummy.rds"
 
 # Employment year arrival
 #saveRDS(LRtoOMout, file.path("output/employment_year/", "LRtoOMout.rds"))
 
 
 # Employment one year arrival
-#saveRDS(LRtoOMout_2, file.path("output/employment_one_year/", "LRtoOMout_2_test.rds"))
+saveRDS(LRtoOMout_2, file.path("output/refmig_refmig/employment_one_year/", "LRtoOMout_2.rds"))
 
 
 # Employment two year arrival
-saveRDS(LRtoOMout_3, file.path("output/employment_two_year/", "LRtoOMout_3_test.rds"))
+saveRDS(LRtoOMout_3, file.path("output/refmig_refmig/employment_two_year/", "LRtoOMout_3.rds"))
 
 
 

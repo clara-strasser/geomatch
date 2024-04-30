@@ -1,4 +1,6 @@
 ############################ TRAIN - TEST SPLIT ################################
+# Aim: Modify data and create data split (training and test data set)
+
 
 # Load packages ----------------------------------------------------------------
 library(dplyr)
@@ -38,11 +40,14 @@ data <- data %>%
 
 # cid
 data <- data %>%
-  mutate(cid_help = paste(pmin(pid, parid), pmax(pid, parid), sep = "_")) %>%
+  mutate(cid_help = paste(pmin(pid, parid), pmax(pid, parid), sep = "_"))  %>%
   group_by(cid_help) %>%
+  mutate(same_state_new = ifelse(length(unique(bula_res)) == 1, 1, 0)) %>%
+  mutate(cid_help = ifelse(same_state_new == 0 & duplicated(cid_help, fromLast = TRUE), paste(cid_help, "_0", sep = ""), cid_help)) %>%
   mutate(cid = cur_group_id()) %>%
   ungroup() %>%
   select(-cid_help)
+
 
 # csize
 data <- data %>%
@@ -128,16 +133,16 @@ data <- data %>%
 
 
 ## 1) Split data -------------------------
-# Lframe - 10974
-# Rframe - 2017
+# Lframe - 9.337
+# Rframe - 3.654
 
 # Lframe
 Lframe <- data %>%
-  filter(immiyear <= 2016)
+  filter(immiyear <= 2015)
 
 # Rframe
 Rframe <- data %>%
-  filter(immiyear >= 2017)
+  filter(immiyear >= 2016)
 
 ## 2) Handle cases -----------------------
 # Keep only cases that are both in Rframe
@@ -147,7 +152,7 @@ Rframe <- data %>%
 
 # ID
 Rframe <- Rframe %>%
-  mutate(parid_in_id = ifelse(free_case == "no" & !parid %in% rid, 2,1))
+  mutate(parid_in_id = ifelse(free_case == "no" & !parid %in% rid & same_state_new == 1, 2,1))
 
 # Keep only that cases
 Rframe <- Rframe %>%
@@ -156,11 +161,11 @@ Rframe <- Rframe %>%
 
 # Save data ------------------------
 
-# Lframe: 10.974
-save(Lframe, file = "data/processed/Lframe.RData")
+# Lframe: 9.337
+save(Lframe, file = "data/refmig_refmig/Lframe.RData")
 
-# Rframe: 1.194
-save(Rframe, file = "data/processed/Rframe.RData")
+# Rframe: 2.372
+save(Rframe, file = "data/refmig_refmig/Rframe.RData")
 
 
 

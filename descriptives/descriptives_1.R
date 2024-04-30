@@ -1,5 +1,5 @@
 ############################ Descriptives - Lframe ######################################
-
+# Aim: run some descriptives
 
 rm(list=ls())
 
@@ -15,7 +15,7 @@ library(naniar)
 
 
 # Load data --------------------------------------------------------------------
-# Lframe - 10974
+# Lframe - 9.368
 load("data/processed/Lframe.RData")
 
 # Change format ----------------------------------------------------------------
