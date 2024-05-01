@@ -1,6 +1,6 @@
 ########################## MAPPING and MATCHING ################################
 # Sample: Ref Mig - Ref Mig
-# Split: T15 - T16
+# Split: T16 - T17
 # References:
 # Bansak, K., & Hainmueller, J. (2017). 
 # Replication Code for: Improving Refugee Integration Through Data-Driven Algorithmic Assignment.
@@ -21,10 +21,10 @@ library(optmatch)
 #LRtoOMout <- readRDS("output/employment_year/LRtoOMout.rds")
 
 # Employment one year arrival
-LRtoOMout <- readRDS("output/train15_test16/refmig_refmig/employment_one_year/LRtoOMout_2.rds")
+LRtoOMout <- readRDS("output/train16_test17/refmig_refmig/employment_one_year/LRtoOMout_2.rds")
 
 # Employment two year arrival
-#LRtoOMout <- readRDS("output/train15_test16/refmig_refmig/employment_two_year/LRtoOMout_3.rds")
+#LRtoOMout <- readRDS("output/refmig_refmig/employment_two_year/LRtoOMout_3.rds")
 
 
 
@@ -116,10 +116,10 @@ mean(A$predprob)
 #save(A, file = "output/employment_year/A.RData")
 
 # Employment one year arrival
-save(A, file = "output/train15_test16/refmig_refmig/employment_one_year/A.RData")
+save(A, file = "output/train16_test17/refmig_refmig/employment_one_year/A.RData")
 
 # Employment two year arrival
-#save(A, file = "output/train15_test16/refmig_refmig/employment_two_year/A.RData")
+#save(A, file = "output/refmig_refmig/employment_two_year/A.RData")
 
 
 

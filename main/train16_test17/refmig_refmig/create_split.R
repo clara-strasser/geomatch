@@ -1,6 +1,6 @@
 ############################ TRAIN - TEST SPLIT ################################
 # Sample: Ref Mig - Ref Mig
-# Split: T15 - T16
+# Split: T16 - T17
 # Aim: Modify data and create data split (training and test data set)
 
 
@@ -34,6 +34,8 @@ data <- rbind(migrants_data, refugee_data)
 # rid: name of variable specifying individual identifier codes
 # cid: name of variable specifying case identifier codes
 # csize: name of variable specifying size of case (e.g. # refugees in family)
+# free_case: is the person a free case or not
+# refugee_sample: does the person belong to refugee sample or not
 
 # Variables: aid and rid
 data <- data %>%
@@ -69,7 +71,6 @@ data <- data %>%
 # migrants: 15, 16, 25, 26
 data <- data %>%
   mutate(refugee_sample = ifelse(psample %in% c(17,18,19,24),1,0))
-
 
 ## 3) Order data -------------------------
 
@@ -113,7 +114,7 @@ data$school_years <- ifelse(data$school_years < 0, NA, data$school_years)
 
 # Remove missings
 #na_columns <- c("religious_affiliation", "german_speaking", "german_writing",
-                #"german_reading", "vocational_training")
+#"german_reading", "vocational_training")
 
 #data <- data[complete.cases(data[, na_columns]), ]
 
@@ -135,30 +136,30 @@ data$school_years <- ifelse(data$school_years < 0, NA, data$school_years)
 
 ## 9) Subset -----------
 # Keep only working age population: 18-67
+# 12.991 rows
 data <- data %>%
   filter(age_immigration >= 18 & age_immigration <= 67)
-
 
 
 # Train - Test Split -----------------------------------------------------------
 
 
 ## 1) Split data -------------------------
-# Lframe - 9.337
-# Rframe - 3.654
+# Lframe - 10.974
+# Rframe - 2.017
 
 # Lframe
 Lframe <- data %>%
-  filter(immiyear <= 2015)
+  filter(immiyear <= 2016)
 
 # Rframe
 Rframe <- data %>%
-  filter(immiyear >= 2016)
+  filter(immiyear >= 2017)
 
 ## 2) Handle cases -----------------------
 # Keep only cases that are both in Rframe
 # If a family member of a case is already in Germany
-# than the person in Rframe s assigned to that location.
+# than the person in Rframe is assigned to that location.
 # Remove that person from Rframe.
 
 # ID
@@ -172,11 +173,11 @@ Rframe <- Rframe %>%
 
 # Save data ------------------------
 
-# Lframe: 9.337
-save(Lframe, file = "data/train15_test16/refmig_refmig/Lframe.RData")
+# Lframe: 10.974
+save(Lframe, file = "data/train16_test17/refmig_refmig/Lframe.RData")
 
-# Rframe: 3.481
-save(Rframe, file = "data/train15_test16/refmig_refmig/Rframe.RData")
+# Rframe: 1.976
+save(Rframe, file = "data/train16_test17/refmig_refmig/Rframe.RData")
 
 
 

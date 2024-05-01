@@ -1,6 +1,6 @@
 ######################## Model Performance ####################################
 # Sample: Ref Mig - Ref Mig
-# Split: T15 - T16
+# Split: T16 - T17
 # Aim: Measure ROC-AUC
 
 rm(list=ls())
@@ -15,7 +15,7 @@ library(gbm)
 # Load data --------------------------------------------------------------------
 
 # Employment one year arrival
-LRtoOMout <- readRDS("output/train15_test16/refmig_refmig/employment_one_year/LRtoOMout_2.rds")
+LRtoOMout <- readRDS("output/train16_test17/refmig_refmig/employment_one_year/LRtoOMout_2.rds")
 
 # Extract data -----------------------------------------------------------------
 
@@ -25,8 +25,8 @@ data <- LRtoOMout[[1]]
 # Modify data ------------------------------------------------------------------
 
 ## Keep selected columns
- data <- data %>%
-   select(-1:-((ncol(data)-18))) 
+data <- data %>%
+  select(-1:-((ncol(data)-18))) 
 
 ## Create true columns
 
@@ -71,7 +71,7 @@ colnames(auc_results) <- 1:16
 # Save table ------------------------------------------------------------------
 
 
-saveRDS(auc_results, "output/train15_test16/refmig_refmig/model_performance/auc_results.rds")
+saveRDS(auc_results, "output/train16_test17/refmig_refmig/model_performance/auc_results.rds")
 
 
 
