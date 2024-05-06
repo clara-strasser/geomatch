@@ -18,7 +18,13 @@
 
 #Function output is a case-level predicted probability matrix
 
+# Mapping metric ---------------------------------------------------------------
 
+compute_femp_prob <- function(x){
+  
+  return(1-(prod(1-x)))
+  
+}
 # Function ---------------------------------------------------------------------
 
 func_M_to_Mstar <- function(mmat,cid,tfunc,print=0){
@@ -53,10 +59,3 @@ func_M_to_Mstar <- function(mmat,cid,tfunc,print=0){
 }
 
 
-# Mapping metric ---------------------------------------------------------------
-
-compute_femp_prob <- function(x){
-  
-  return(1-(prod(1-x)))
-  
-}

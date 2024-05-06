@@ -17,9 +17,6 @@ library(optmatch)
 
 # Load modeling results --------------------------------------------------------
 
-# Employment year arrival
-#LRtoOMout <- readRDS("output/employment_year/LRtoOMout.rds")
-
 # Employment one year arrival
 LRtoOMout <- readRDS("output/train15_test16/refmig_refmig/employment_one_year/LRtoOMout_2.rds")
 

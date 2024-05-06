@@ -99,7 +99,7 @@ func_LR_to_OM_boostedtreesCV_binary <- function(outcome,Lframe,Rframe,
                             #Lframe[,aid] == incl.locs[j])[,-ncol(Lframe)]
       boost.ref <- gbm(outcome ~ ., data = Lframe.loc, shrinkage = shrink,
                        distribution="bernoulli", n.trees = n.trees, 
-                       interaction.depth = depth, cv.folds = 3)
+                       interaction.depth = depth, cv.folds = 3, n.cores = detectCores())
       depth.ntrees.CVs[[j]][,k] <- boost.ref$cv.error
     }
     
@@ -129,7 +129,7 @@ func_LR_to_OM_boostedtreesCV_binary <- function(outcome,Lframe,Rframe,
       #subset(Lframe,Lframe[,aid] == incl.locs[j])[,-ncol(Lframe)]
     boost.ref <- gbm(outcome ~ ., data = Lframe.loc, shrinkage = shrink,
                      distribution="bernoulli", n.trees = best.ntrees[j], 
-                     interaction.depth = best.depths[j])
+                     interaction.depth = best.depths[j], n.cores = detectCores())
     y <- Lframe.loc$outcome
     
     oospreds <- predict(boost.ref, newdata = Rframe,n.trees = best.ntrees[j],

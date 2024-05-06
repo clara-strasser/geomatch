@@ -19,7 +19,7 @@ library(optmatch)
 #LRtoOMout <- readRDS("output/employment_year/LRtoOMout.rds")
 
 # Employment one year arrival
-LRtoOMout <- readRDS("output/refmig_ref/employment_one_year/LRtoOMout_2.rds")
+LRtoOMout <- readRDS("output/train15_test16/refmig_ref/employment_one_year/LRtoOMout_2.rds")
 
 # Employment two year arrival
 #LRtoOMout <- readRDS("output/refmig_refmig/employment_two_year/LRtoOMout_3.rds")
