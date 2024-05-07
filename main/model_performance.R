@@ -1,7 +1,5 @@
 ######################## Model Performance ####################################
-# Sample: Ref Mig - Ref Mig
-# Split: T16 - T17
-# Aim: Measure ROC-AUC
+# Measure ROC-AUC
 
 rm(list=ls())
 
@@ -12,10 +10,38 @@ library(mlr3)
 library(mlr3measures)
 library(gbm)
 
-# Load data --------------------------------------------------------------------
+# Set directory ----------------------------------------------------------------
+root_dir <- "output/"
 
-# Employment one year arrival
-LRtoOMout <- readRDS("output/train16_test17/refmig_refmig/employment_one_year/LRtoOMout_2.rds")
+
+# Set splits -------------------------------------------------------------------
+
+# Train - Test Split
+train_test_splits <- list("train15_test16","train16_test17")
+
+
+# Sample Split
+sample_splits <- list(list(name="refmig_refmig",
+                           cal_auroc=F),
+                      list(name="refmig_ref",
+                           cal_auroc=F))
+
+# Create table ------------------------------------------------------------------
+roc_auc <- data.frame(
+  train_test_split = character(1), 
+  sample_split = character(1),
+  mean_outcome = numeric(1),
+  mean_pred = numeric(1),
+  rel_difference = numeric(1),
+  n = numeric(1),
+  refugees = numeric(1)
+)
+
+
+
+
+
+
 
 # Extract data -----------------------------------------------------------------
 
@@ -71,12 +97,7 @@ colnames(auc_results) <- 1:16
 # Save table ------------------------------------------------------------------
 
 
-saveRDS(auc_results, "output/train16_test17/refmig_refmig/model_performance/auc_results.rds")
-
-
-
-
-
+saveRDS(auc_results, "output/refmig_ref/model_performance/auc_results.rds")
 
 
 

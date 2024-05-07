@@ -24,7 +24,8 @@ save_dir <- "output/"
 
 
 # Train - Test Split
-train_test_splits <- list("train15_test16")
+train_test_splits <- list("train15_test16","train16_test17")
+#train_test_splits <- list("train16_test17")
 
 # Sample Split
 
@@ -33,8 +34,8 @@ sample_splits <- list(list(name="refmig_refmig",
                    list(name="refmig_ref",
                         cal_auroc=F))
 
-sample_splits <- list(list(name="refmig_refmig",
-                           cal_auroc=F))
+#sample_splits <- list(list(name="refmig_ref",
+                           #cal_auroc=F))
 
 
 # Load functions ---------------------------------------------------------------
@@ -64,7 +65,9 @@ results <- data.frame(
   sample_split = character(1),
   mean_outcome = numeric(1),
   mean_pred = numeric(1),
-  rel_difference = numeric(1)
+  rel_difference = numeric(1),
+  n = numeric(1),
+  refugees = numeric(1)
 )
 
 
@@ -131,20 +134,37 @@ for (train_test_split in train_test_splits){
     # Calculate relative difference
     rel_difference <- (mean_pred - mean_outcome) / mean_outcome
     
-    # Assign results to the table
+    # Number of observations
+    n <- nrow(Rframe)
     
+    # Number of refugees
+    refugees <- sum(Rframe$refugee_sample ==1)
+    
+    # Assign results to the table
     results <- rbind(results, c(train_test_split,
                                 sample_splits[[sample_split]]$name,
                                 mean_outcome,
                                 mean_pred,
-                                rel_difference))
+                                rel_difference,
+                                n,
+                                refugees))
     
     # 6) Save
-    
     saveRDS(LRtoOMout, file.path(paste0(save_dir,train_test_split,"/",sample_splits[[sample_split]]$name,"/"),"LRtoOMout.rds"))
     save(A, file = paste0(save_dir,train_test_split,"/",sample_splits[[sample_split]]$name,"/","A.RData"))
-    
+    #save(results, file = paste0(save_dir,train_test_split,"/",sample_splits[[sample_split]]$name,"/","results.RData"))
     
   }
 }
+
+# Save overall table
+results <- results[-1, ]
+save(results, file = "output/tables/results.RData")
+
+
+
+
+
+
+
 
