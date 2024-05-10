@@ -89,7 +89,16 @@ for (train_test_split in train_test_splits){
       
     # 2) Modelling ----------------------
     set.seed(1234)
-    LRtoOMout <- func_LR_to_OM_boostedtreesCV_binary(outcome = "employment_one_year_arrival",
+    #LRtoOMout <- func_LR_to_OM_boostedtreesCV_binary(outcome = "employment_one_year_arrival",
+                                                     #Lframe = Lframe, Rframe = Rframe,
+                                                     #aid = "aid", rid = "rid",
+                                                     #cid = "cid", csize = "csize",
+                                                     #incl.locs = incl.locs, 
+                                                     #predictors = predictors,
+                                                     #depth.vec = c(4,5,6),n.trees=1000,
+                                                     #shrink = 0.01)
+    
+    LRtoOMout <- func_LR_to_OM_boostedtreesCV_binary(outcome = "employment_two_year_arrival",
                                                      Lframe = Lframe, Rframe = Rframe,
                                                      aid = "aid", rid = "rid",
                                                      cid = "cid", csize = "csize",
@@ -97,6 +106,7 @@ for (train_test_split in train_test_splits){
                                                      predictors = predictors,
                                                      depth.vec = c(4,5,6),n.trees=1000,
                                                      shrink = 0.01)
+    
     
     # 3) Mapping ----------------------
     OM <- LRtoOMout[[1]]
@@ -150,16 +160,16 @@ for (train_test_split in train_test_splits){
                                 refugees))
     
     # 6) Save
-    saveRDS(LRtoOMout, file.path(paste0(save_dir,train_test_split,"/",sample_splits[[sample_split]]$name,"/"),"LRtoOMout.rds"))
-    save(A, file = paste0(save_dir,train_test_split,"/",sample_splits[[sample_split]]$name,"/","A.RData"))
+    saveRDS(LRtoOMout, file.path(paste0(save_dir,train_test_split,"/",sample_splits[[sample_split]]$name,"/"),"LRtoOMout2.rds"))
+    save(A, file = paste0(save_dir,train_test_split,"/",sample_splits[[sample_split]]$name,"/","A2.RData"))
     #save(results, file = paste0(save_dir,train_test_split,"/",sample_splits[[sample_split]]$name,"/","results.RData"))
     
   }
 }
 
 # Save overall table
-results <- results[-1, ]
-save(results, file = "output/tables/results.RData")
+results2 <- results[-1, ]
+save(results2, file = "output/tables/results2.RData")
 
 
 
