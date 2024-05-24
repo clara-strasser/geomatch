@@ -87,6 +87,35 @@ data <- data %>%
 
 ## 5) Complete cases -------------------- 
 
+
+###########
+
+Lframe <- Lframe %>%
+  filter(!is.na(employment_year_arrival))
+
+Rframe <- Rframe %>%
+  filter(!is.na(employment_year_arrival))
+
+###########
+
+Lframe <- Lframe %>%
+  filter(!is.na(employment_one_year_arrival))
+
+Rframe <- Rframe %>%
+  filter(!is.na(employment_one_year_arrival))
+
+###########
+
+Lframe <- Lframe %>%
+  filter(!is.na(employment_two_year_arrival))
+
+Rframe <- Rframe %>%
+  filter(!is.na(employment_two_year_arrival))
+
+
+
+
+
 data <- data %>%
   filter(!is.na(employment_year_arrival)) %>%
   filter(!is.na(employment_one_year_arrival)) %>%
