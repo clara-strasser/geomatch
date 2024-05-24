@@ -10,35 +10,27 @@ library(mlr3)
 library(mlr3measures)
 library(gbm)
 
-# Set directory ----------------------------------------------------------------
-root_dir <- "output/"
+# Define paths -----------------------------------------------------------------
+base_path <- "/Users/clarastrasser"
+path_data_final <- file.path(base_path, "geomatch_data")
 
 # Set splits -------------------------------------------------------------------
 
-# Train - Test Split
-train_test_splits <- list("train15_test16","train16_test17")
-#train_test_splits <- list("train15_test16")
-
-
 # Sample Split
-sample_splits <- list(list(name="refmig_refmig",
-                           cal_auroc=F),
-                      list(name="refmig_ref",
-                           cal_auroc=F))
-#sample_splits <- list(list(name="refmig_ref",
-#cal_auroc=F))
+sample_splits <- list(list(name="refmig_refmig"),
+                      list(name="refmig_ref"))
 
 # Set outcomes -----------------------------------------------------------------
 
 # Outcome variables
-outcome_variables <- list("LRtoOMout.rds", "LRtoOMout2.rds")
-
-
+outcome_variables <- c("employment_one_year_arrival",
+                       "employment_two_year_arrival",
+                       "employment_three_year_arrival",
+                       "employment_four_year_arrival")
 # PRECISION - RECALL -----------------------------------------------------------
 
 # Create table -----------------------------------------------------------------
 prauc_results <- data.frame(
-  train_test_split = character(1), 
   sample_split = character(1),
   outcome_variable = character(1),
   prauc_overall = NA
@@ -48,12 +40,12 @@ prauc_results <- data.frame(
 prauc_results[, paste0("prauc_", 1:16)] <- NA
 
 
-for (train_test_split in train_test_splits){
-  for (sample_split in 1:length(sample_splits)){
+
+for (sample_split in 1:length(sample_splits)){
     for (outcome_variable in outcome_variables) {
       
       # 1) Load data  -----------------------
-      LRtoOMout <- readRDS(paste0(root_dir, train_test_split, "/", sample_splits[[sample_split]]$name, "/", outcome_variable))
+      LRtoOMout <- readRDS(paste0(path_data_final, "/", sample_splits[[sample_split]]$name, "/", outcome_variable, "/", "LRtoOMout.rds"))
       
       # 2) Extract data --------------------
       data <- LRtoOMout[[1]]
@@ -74,7 +66,6 @@ for (train_test_split in train_test_splits){
       
       # 4) Generate PRAUC values per state ------------
       prauc_row <- data.frame(
-        train_test_split = train_test_split,
         sample_split = sample_splits[[sample_split]]$name,
         outcome_variable = outcome_variable,
         prauc_overall = prauc_value_overall
@@ -93,7 +84,7 @@ for (train_test_split in train_test_splits){
       prauc_results <- rbind(prauc_results, prauc_row)
     }
   }
-}  
+ 
 
 
 # Save table -------------------------------------------------------------------

@@ -26,10 +26,10 @@ library(parallel)
 
 
 # Define paths -----------------------------------------------------------------
-base_path <- "/Users/clarastrasser/"
+base_path <- "/Users/clarastrasser"
 path_data_soep <- file.path(base_path, "soep_data", "final")
-path_data_final <- file.path(base_path, "geomatch_data", "final")
-
+path_data_geomatch <- file.path(base_path, "geomatch_data", "final")
+path_data_final <- file.path(base_path, "geomatch_data")
 
 # Load functions ---------------------------------------------------------------
 source("src/func_train_test_split.R")
@@ -74,13 +74,6 @@ results <- data.frame(
 
 
 # Specify sample splits
-
-
-
-sample_splits <- list(list(name="refmig_ref",
-                           ref=T,
-                           mig=F))
-
 sample_splits <- list(list(name="refmig_refmig",
                            ref=T,
                            mig=T),
@@ -90,16 +83,15 @@ sample_splits <- list(list(name="refmig_refmig",
 
 
 # Specify outcome variables
-outcome_variables <- c("employment_two_year_arrival")
-
 outcome_variables <- c("employment_one_year_arrival",
                        "employment_two_year_arrival",
-                       "employment_three_year_arrival")
+                       "employment_three_year_arrival",
+                       "employment_four_year_arrival")
 
 # Train - Test Split -----------------------------------------------------------
 
 # Define path
-dir <- paste0(path_data_final, "/data_geomatch.RData")
+dir <- paste0(path_data_geomatch, "/data_geomatch.RData")
 
 # Split into Lframe and Rframe
 data_splits <- train_test_split(dir, train_year = 2015, test_year = 2016)
@@ -110,27 +102,28 @@ Lframe <- data_splits$train
 Rframe <- data_splits$test
 
 
+
 # Main -------------------------------------------------------------------------
+
+# Specify seed
+set.seed(1234)
 
 for (sample_split in 1:length(sample_splits)){
   for (outcome_variable in outcome_variables) {
   
   # 1) Subset Test ----------------------
-  Rframe <- test_sample_split(Rframe,
+  Rframe_subset <- test_sample_split(Rframe,
                          ref = sample_splits[[sample_split]]$ref,
                          mig = sample_splits[[sample_split]]$mig)
   
-
-  
   # 2) Complete Cases -------------------
-  complete_cases <- data_to_complete(train = Lframe, test = Rframe, outcome = outcome_variable)
+  complete_cases <- data_to_complete(train = Lframe, test = Rframe_subset, outcome = outcome_variable)
   Lframe <- complete_cases$train
-  Rframe <- complete_cases$test
+  Rframe_subset <- complete_cases$test
   
   # 3) Modelling ----------------------
-  set.seed(1234)
   LRtoOMout <- func_LR_to_OM_boostedtreesCV_binary(outcome = outcome_variable,
-                                                   Lframe = Lframe, Rframe = Rframe,
+                                                   Lframe = Lframe, Rframe = Rframe_subset,
                                                    aid = "aid", rid = "rid",
                                                    cid = "cid", csize = "csize",
                                                    incl.locs = incl.locs, 
@@ -148,7 +141,6 @@ for (sample_split in 1:length(sample_splits)){
   
   
   # 5) Matching ---------------------
-  
   Cushion <- 1
   holder <- (O %>% group_by(aid) %>% summarise(out = length(unique(cid))))
   slots <- holder$out
@@ -175,14 +167,13 @@ for (sample_split in 1:length(sample_splits)){
   rel_difference <- (mean_pred - mean_outcome) / mean_outcome
   
   # Number of observations
-  n <- nrow(Rframe)
+  n <- nrow(Rframe_subset)
   
   # Number of refugees
-  refugees <- sum(Rframe$refugee_sample ==1)
+  refugees <- sum(Rframe_subset$refugee_sample ==1)
   
   # Assign results to the table
-  results <- rbind(results, c(train_test_split,
-                              sample_splits[[sample_split]]$name,
+  results <- rbind(results, c(sample_splits[[sample_split]]$name,
                               outcome_variable,
                               mean_outcome,
                               mean_pred,
@@ -192,153 +183,18 @@ for (sample_split in 1:length(sample_splits)){
   
   
   
-  
-  # 6) Save
-  saveRDS(LRtoOMout, file.path(paste0(save_dir,train_test_split,"/",sample_splits[[sample_split]]$name,"/"),"LRtoOMout2.rds"))
-  save(A, file = paste0(save_dir,train_test_split,"/",sample_splits[[sample_split]]$name,"/","A2.RData"))
-  #save(results, file = paste0(save_dir,train_test_split,"/",sample_splits[[sample_split]]$name,"/","results.RData"))
-  
+  # 6) Save results --------------
+  saveRDS(LRtoOMout, file.path(paste0(path_data_final,"/",sample_splits[[sample_split]]$name,"/", outcome_variable, "/"),"LRtoOMout.rds"))
+  save(A, file = paste0(path_data_final,"/",sample_splits[[sample_split]]$name,"/", outcome_variable, "/", "A.RData"))
   
   
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-# Set splits -------------------------------------------------------------------
-
-
-
-# Train - Test Split
-train_test_splits <- list("train15_test16","train16_test17")
-#train_test_splits <- list("train16_test17")
-
-# Sample Split
-
-sample_splits <- list(list(name="refmig_refmig",
-                        cal_auroc=F),
-                   list(name="refmig_ref",
-                        cal_auroc=F))
-
-#sample_splits <- list(list(name="refmig_ref",
-                           #cal_auroc=F))
-
-
-
-
-
-# Run Algorithm ----------------------------------------------------------------
-
-
-for (train_test_split in train_test_splits){
-  for (sample_split in 1:length(sample_splits)){
-    
-    
-    # 1) Load data  -----------------------
-    #TODO: Use function
-    load(paste0(root_dir, train_test_split, "/", sample_splits[[sample_split]]$name, "/", "Lframe.RData"))
-    load(paste0(root_dir, train_test_split, "/", sample_splits[[sample_split]]$name, "/", "Rframe.RData"))
-  
-    
-    #if (categories[[category]]$cal_auroc){
-      #print("I calculate AUROC for:")
-      #print(categories[[category]]$name)
-      
-    # 2) Modelling ----------------------
-    set.seed(1234)
-    #LRtoOMout <- func_LR_to_OM_boostedtreesCV_binary(outcome = "employment_one_year_arrival",
-                                                     #Lframe = Lframe, Rframe = Rframe,
-                                                     #aid = "aid", rid = "rid",
-                                                     #cid = "cid", csize = "csize",
-                                                     #incl.locs = incl.locs, 
-                                                     #predictors = predictors,
-                                                     #depth.vec = c(4,5,6),n.trees=1000,
-                                                     #shrink = 0.01)
-    
-    LRtoOMout <- func_LR_to_OM_boostedtreesCV_binary(outcome = "employment_two_year_arrival",
-                                                     Lframe = Lframe, Rframe = Rframe,
-                                                     aid = "aid", rid = "rid",
-                                                     cid = "cid", csize = "csize",
-                                                     incl.locs = incl.locs, 
-                                                     predictors = predictors,
-                                                     depth.vec = c(4,5,6),n.trees=1000,
-                                                     shrink = 0.01)
-    
-    
-    # 3) Mapping ----------------------
-    OM <- LRtoOMout[[1]]
-    lastvar <- 6
-    O <- OM[,1:lastvar]
-    M <- as.matrix(OM[,-(1:lastvar)])
-    rownames(M) <- O$rid
-    Mstar <- func_M_to_Mstar(mmat = M, cid = O$cid, tfunc = compute_femp_prob)
-    
-    
-    # 4) Matching ---------------------
-    
-    Cushion <- 1
-    holder <- (O %>% group_by(aid) %>% summarise(out = length(unique(cid))))
-    slots <- holder$out
-    names(slots) <- holder$aid
-    D <- func_Mstar_to_D(Mstar = Mstar, slots = slots, cushion = Cushion)
-    options(optmatch_max_problem_size = Inf)
-    optout <- pairmatch(x = D, controls = 1)
-    aids <- unique(colnames(Mstar))
-    Astar <- func_optmatch_to_Astar(optout = optout, aids = aids, print=0)
-    slots
-    table(Astar$raid)
-    A <- func_Astar_to_A(Astar = Astar, O = O, M = M, print=0)
-    
-    
-    # 5) Save results ------------------------
-    
-    # Calculate mean outcome
-    mean_outcome <- mean(A$outcome)
-    
-    # Calculate mean predicted probability
-    mean_pred <- mean(A$predprob)
-    
-    # Calculate relative difference
-    rel_difference <- (mean_pred - mean_outcome) / mean_outcome
-    
-    # Number of observations
-    n <- nrow(Rframe)
-    
-    # Number of refugees
-    refugees <- sum(Rframe$refugee_sample ==1)
-    
-    # Assign results to the table
-    results <- rbind(results, c(sample_splits[[sample_split]]$name,
-                                mean_outcome,
-                                mean_pred,
-                                rel_difference,
-                                n,
-                                refugees))
-    
-    # 6) Save ---------------------------------
-    saveRDS(LRtoOMout, file.path(paste0(save_dir,train_test_split,"/",sample_splits[[sample_split]]$name,"/"),"LRtoOMout2.rds"))
-    save(A, file = paste0(save_dir,train_test_split,"/",sample_splits[[sample_split]]$name,"/","A2.RData"))
-
-  }
-}
 
 # Save overall table
-results2 <- results[-1, ]
-save(results2, file = "output/tables/results2.RData")
-
-
-
-
+results <- results[-1, ]
+save(results, file = paste0(path_data_final,"/","results.RData"))
 
 
 
