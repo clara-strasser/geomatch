@@ -13,6 +13,7 @@ library(gbm)
 # Define paths -----------------------------------------------------------------
 base_path <- "/Users/clarastrasser"
 path_data_final <- file.path(base_path, "geomatch_data")
+path_data_output <- file.path(base_path, "geomatch_data", "output", "tables")
 
 # Set splits -------------------------------------------------------------------
 
@@ -88,9 +89,8 @@ for (sample_split in 1:length(sample_splits)){
 
 
 # Save table -------------------------------------------------------------------
-prauc_results$outcome_variable <- ifelse(prauc_results$outcome_variable == "LRtoOMout.rds", "one year", "two years")
 prauc_results <- prauc_results[-1, ]
-save(prauc_results, file = "output/tables/prauc_results.RData")
+save(prauc_results, file = paste0(path_data_output, "/prauc_results.RData"))
 
 
 
