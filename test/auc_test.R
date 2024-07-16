@@ -15,7 +15,7 @@ base_path <- "/Users/clarastrasser"
 path_data_final <- file.path(base_path, "geomatch_data")
 
 # Load data --------------------------------------------------------------------
-LRtoOMout <- readRDS(paste0(path_data_final, "/", "refmig_refmig", "/", "employment_one_year_arrival", "/", "LRtoOMout.rds"))
+LRtoOMout <- readRDS(paste0(path_data_final, "/", "refmig_ref", "/", "employment_one_year_arrival", "/", "LRtoOMout.rds"))
 
 
 # ROC-AUC  ---------------------------------------------------------------------

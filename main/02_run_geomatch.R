@@ -23,7 +23,7 @@ library(dplyr)
 library(stringr)
 library(optmatch)
 library(parallel)
-
+library(openxlsx)
 
 # Define paths -----------------------------------------------------------------
 base_path <- "/Users/clarastrasser"
@@ -46,7 +46,8 @@ source("src/func_Astar_to_A.R")
 
 # Specify predictors
 predictors <- c("immiyear", "sex", "birth_year", "birth_month",
-                "refugee_sample", "free_case", "partner",
+                "refugee_sample",
+                "free_case", "partner",
                 "age_immigration", "corigin", "religious_affiliation",
                 "german_speaking", "german_writing", "german_reading", 
                 "school_degree_low", "school_degree_med", "school_degree_high",
@@ -74,6 +75,30 @@ results <- data.frame(
 
 
 # Specify sample splits
+sample_splits <- list(list(name="mig_ref",
+                           ref=T,
+                           mig=F))
+
+sample_splits <- list(list(name="refmig_mig",
+                           ref=F,
+                           mig=T))
+
+sample_splits <- list(list(name="ref_ref",
+                           ref=T,
+                           mig=F))
+
+sample_splits <- list(list(name="ref_refmig",
+                           ref=T,
+                           mig=T))
+
+sample_splits <- list(list(name="refmig_refmig",
+                           ref=T,
+                           mig=T))
+
+sample_splits <- list(list(name="refmig_ref",
+                           ref=T,
+                           mig=F))
+
 sample_splits <- list(list(name="refmig_refmig",
                            ref=T,
                            mig=T),
@@ -83,6 +108,11 @@ sample_splits <- list(list(name="refmig_refmig",
 
 
 # Specify outcome variables
+outcome_variables <- c("employment_two_year_arrival")
+outcome_variables <- c("employment_three_year_arrival",
+                       "employment_four_year_arrival")
+outcome_variables <- c("employment_one_year_arrival",
+                       "employment_two_year_arrival")
 outcome_variables <- c("employment_one_year_arrival",
                        "employment_two_year_arrival",
                        "employment_three_year_arrival",
@@ -102,9 +132,12 @@ Lframe <- data_splits$train
 Rframe <- data_splits$test
 
 
+# Subset
+Lframe <- Lframe %>%
+  subset(refugee_sample == 1)
+
 
 # Main -------------------------------------------------------------------------
-
 # Specify seed
 set.seed(1234)
 
@@ -192,9 +225,29 @@ for (sample_split in 1:length(sample_splits)){
 }
 
 
-# Save overall table
-results <- results[-1, ]
-save(results, file = paste0(path_data_final,"/","results.RData"))
+# Save overall table in RData
+results_refmig_ref_correct <- results[-1, ]
+results <- rbind(results, results_ref_ref2)
+results <- results %>%
+  slice(c(1:14, 19, 15:18))
+
+
+save(results_refmig_ref_correct, file = paste0(path_data_final,"/","results_refmig_ref_correct.RData"))
+
+# Save overall table in Excel
+# Load existing workbook
+wb <- loadWorkbook(paste0(path_data_final,"/", "results.xlsx"))
+addWorksheet(wb, "Matching Results")
+writeData(wb, "Matching Results", results)
+setColWidths(wb, sheet = "Matching Results", cols = 1:ncol(results), widths = "auto")
+saveWorkbook(wb, paste0(path_data_final,"/","results.xlsx"), overwrite = TRUE)
+
+
+
+
+
+
+
 
 
 

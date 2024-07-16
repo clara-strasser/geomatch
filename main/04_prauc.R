@@ -19,7 +19,11 @@ path_data_output <- file.path(base_path, "geomatch_data", "output", "tables")
 
 # Sample Split
 sample_splits <- list(list(name="refmig_refmig"),
-                      list(name="refmig_ref"))
+                      list(name="refmig_ref"),
+                      list(name="refmig_mig"),
+                      list(name="ref_refmig"),
+                      list(name="ref_ref"),
+                      list(name="ref_mig"))
 
 # Set outcomes -----------------------------------------------------------------
 
@@ -45,9 +49,14 @@ prauc_results[, paste0("prauc_", 1:16)] <- NA
 for (sample_split in 1:length(sample_splits)){
     for (outcome_variable in outcome_variables) {
       
-      # 1) Load data  -----------------------
-      LRtoOMout <- readRDS(paste0(path_data_final, "/", sample_splits[[sample_split]]$name, "/", outcome_variable, "/", "LRtoOMout.rds"))
+      file_path <- paste0(path_data_final, "/", sample_splits[[sample_split]]$name, "/", outcome_variable, "/", "LRtoOMout.rds")
       
+      # Check if the file exists
+      if (file.exists(file_path)) {
+        
+      # 1) Load data  -----------------------
+        LRtoOMout <- readRDS(file_path)
+        
       # 2) Extract data --------------------
       data <- LRtoOMout[[1]]
       
@@ -83,14 +92,34 @@ for (sample_split in 1:length(sample_splits)){
       
       # Append row to auc_results dataframe
       prauc_results <- rbind(prauc_results, prauc_row)
+      
+      
+      } else {
+        
+        # Handle the case where the file does not exist
+        message(paste("File not found for sample split", sample_splits[[sample_split]]$name, "and outcome variable", outcome_variable))
+        
+        # You can add additional handling here if needed, such as setting `data` to `NULL` or skipping the iteration.
+        next
     }
   }
- 
+} 
 
 
-# Save table -------------------------------------------------------------------
+# Save table R------------------------------------------------------------------
 prauc_results <- prauc_results[-1, ]
 save(prauc_results, file = paste0(path_data_output, "/prauc_results.RData"))
+
+# Save table Excel -------------------------------------------------------------
+
+# Load existing workbook
+wb <- loadWorkbook(paste0(path_data_final,"/", "results.xlsx"))
+addWorksheet(wb, "AUC PR")
+writeData(wb, "AUC PR", prauc_results)
+setColWidths(wb, sheet = "AUC PR", cols = 1:ncol(prauc_results), widths = "auto")
+saveWorkbook(wb, paste0(path_data_final,"/","results.xlsx"), overwrite = TRUE)
+
+
 
 
 
