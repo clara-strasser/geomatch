@@ -46,8 +46,8 @@ source("src/func_Astar_to_A.R")
 
 # Specify predictors
 predictors <- c("immiyear", "sex", "birth_year", "birth_month",
-                "refugee_sample",
-                "free_case", "partner",
+                #"refugee_sample",
+                "free_case", #"partner",
                 "age_immigration", "corigin", "religious_affiliation",
                 "german_speaking", "german_writing", "german_reading", 
                 "school_degree_low", "school_degree_med", "school_degree_high",
@@ -75,48 +75,22 @@ results <- data.frame(
 
 
 # Specify sample splits
-sample_splits <- list(list(name="mig_ref",
-                           ref=T,
-                           mig=F))
-
-sample_splits <- list(list(name="refmig_mig",
-                           ref=F,
-                           mig=T))
+#sample_splits <- list(list(name="refmig_mig",
+                          # ref=F,
+                           # mig=T))
 
 sample_splits <- list(list(name="ref_ref",
-                           ref=T,
-                           mig=F))
-
-sample_splits <- list(list(name="ref_refmig",
-                           ref=T,
-                           mig=T))
-
-sample_splits <- list(list(name="refmig_refmig",
-                           ref=T,
-                           mig=T))
-
-sample_splits <- list(list(name="refmig_ref",
-                           ref=T,
-                           mig=F))
-
-sample_splits <- list(list(name="refmig_refmig",
-                           ref=T,
-                           mig=T),
-                      list(name="refmig_ref",
                            ref=T,
                            mig=F))
 
 
 # Specify outcome variables
 outcome_variables <- c("employment_two_year_arrival")
-outcome_variables <- c("employment_three_year_arrival",
-                       "employment_four_year_arrival")
-outcome_variables <- c("employment_one_year_arrival",
-                       "employment_two_year_arrival")
-outcome_variables <- c("employment_one_year_arrival",
-                       "employment_two_year_arrival",
-                       "employment_three_year_arrival",
-                       "employment_four_year_arrival")
+
+#outcome_variables <- c("employment_one_year_arrival",
+                       #"employment_two_year_arrival",
+                       #"employment_three_year_arrival",
+                       #"employment_four_year_arrival")
 
 # Train - Test Split -----------------------------------------------------------
 
@@ -132,7 +106,8 @@ Lframe <- data_splits$train
 Rframe <- data_splits$test
 
 
-# Subset
+# Subset Lframe
+# If you use "Sample split" = RefMig_Ref, than dont subset code
 Lframe <- Lframe %>%
   subset(refugee_sample == 1)
 
@@ -217,8 +192,8 @@ for (sample_split in 1:length(sample_splits)){
   
   
   # 6) Save results --------------
-  saveRDS(LRtoOMout, file.path(paste0(path_data_final,"/",sample_splits[[sample_split]]$name,"/", outcome_variable, "/"),"LRtoOMout.rds"))
-  save(A, file = paste0(path_data_final,"/",sample_splits[[sample_split]]$name,"/", outcome_variable, "/", "A.RData"))
+  #saveRDS(LRtoOMout, file.path(paste0(path_data_final,"/",sample_splits[[sample_split]]$name,"/", outcome_variable, "/"),"LRtoOMout.rds"))
+  #save(A, file = paste0(path_data_final,"/",sample_splits[[sample_split]]$name,"/", outcome_variable, "/", "A.RData"))
   
   
   }
